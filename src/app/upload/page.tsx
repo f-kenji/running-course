@@ -1,7 +1,7 @@
 // /app/upload/page.tsx
 'use client';
-
 import { useState } from 'react';
+import Link from "next/link"
 // import { supabase } from '../../lib/supabaseClient';
 import PrefCitySelect from '../components/PrefCitySelect';
 import Button from '../components/Button';
@@ -84,57 +84,63 @@ export default function UploadPage() {
     //   setLoading(false);
     // }
   };
-  console.log('選択された市区:', pref, city)
+  // ----------------------------------------
+  // JSX 
+  // ----------------------------------------
+  // console.log('選択された市区:', pref, city)
   return (
-    <div className="max-w-md mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">コースを投稿する</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex flex-col space-y-2">
-          <input
-            type="text"
-            placeholder="タイトル"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            required
-            className="w-full p-2 border border-gray-300 rounded-md" />
-          <textarea
-            placeholder="説明"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md " />
-          <input
-            type="number"
-            placeholder="距離(km)"
-            value={distance}
-            onChange={e => setDistance(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md" />
-          <PrefCitySelect
-            pref={pref}
-            city={city}
-            setPref={setPref}
-            setCity={setCity} />
-          <input
-            type="file"
-            accept=".gpx"
-            onChange={e => setGpxFile(e.target.files?.[0] || null)}
-            required
-            className="border border-gray-300 rounded-md" />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={e => setThumbnail(e.target.files?.[0] || null)}
-            className="border border-gray-300 rounded-md" />
-          <Button
-            type="submit"
-            disabled={loading}
-            variant="primary"
-            className="max-w-4xl w-24"
-          >
-            {loading ? '投稿中...' : '投稿'}
-          </Button>
-        </div>
-      </form>
-      {message && <p className="mt-2">{message}</p>}
-    </div>
+    <>
+      <div className="max-w-md mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-4">コースを投稿する</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex flex-col space-y-6">
+            <input
+              type="text"
+              placeholder="タイトル"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              required
+              className="w-full p-2 border border-gray-300 rounded-md" />
+            <textarea
+              placeholder="説明"
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md " />
+            <input
+              type="number"
+              placeholder="距離(km)"
+              value={distance}
+              onChange={e => setDistance(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md" />
+            <PrefCitySelect
+              pref={pref}
+              city={city}
+              setPref={setPref}
+              setCity={setCity} />
+            <input
+              type="file"
+              accept=".gpx"
+              onChange={e => setGpxFile(e.target.files?.[0] || null)}
+              required
+              className="border border-gray-300 rounded-md" />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={e => setThumbnail(e.target.files?.[0] || null)}
+              className="border border-gray-300 rounded-md" />
+            <Button
+              type="submit"
+              disabled={loading}
+              variant="primary"
+              className="max-w-4xl w-24"
+            >
+              {loading ? '投稿中...' : '投稿'}
+            </Button>
+          </div>
+        </form>
+        {message && <p className="mt-2">{message}</p>}
+      </div>
+      <Link href="/">Running Course</Link>
+    </>
   );
 }

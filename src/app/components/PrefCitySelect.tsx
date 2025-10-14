@@ -3,21 +3,16 @@
 import { useState, useEffect } from 'react';
 import prefCityData from '../data/prefCity.json';
 import DialogPrefCitySelect from './DialogPrefCitySelect';
+import { PrefCityProps } from '../../types/PrefCity'
 
-type Props = {
-  pref: string;
-  city: string;
-  setPref: (p: string) => void;
-  setCity: (c: string) => void;
-};
-
-export default function PrefCitySelect({ pref, city, setPref, setCity }: Props) {
+export default function PrefCitySelect({ pref, city, setPref, setCity }: PrefCityProps) {
   const [cities, setCities] = useState<string[]>([]);
   // ----------------------------------------
   // useEffect 
   // ----------------------------------------   
   useEffect(() => {
     if (pref) {
+      // 都道府県 に対する 市区のリストを設定
       const match = prefCityData.find((p: any) => p.pref === pref);
       setCities(match ? match.cities : []);
     } else {
@@ -34,9 +29,9 @@ export default function PrefCitySelect({ pref, city, setPref, setCity }: Props) 
         {pref && city ? `${pref} ${city}` : '未選択'}
       </div>
       {/* ✅ props を渡す */}
-      <DialogPrefCitySelect 
-      setPref={setPref} 
-      setCity={setCity} />
+      <DialogPrefCitySelect
+        setPref={setPref}
+        setCity={setCity} />
     </div>
   );
 }

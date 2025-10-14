@@ -1,5 +1,6 @@
 // app/page.tsx
 import Link from "next/link";
+const style = "bg-rose-600 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
 
 export default function Home() {
   return (
@@ -8,13 +9,13 @@ export default function Home() {
       <div className="space-x-2">
         <Link
           href="/map"
-          className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+          className={style}
         >
           地図ページへ
         </Link>
         <Link
           href="/upload"
-          className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+          className={style}
         >
           投稿ページへ
         </Link>

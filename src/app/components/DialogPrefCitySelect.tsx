@@ -2,13 +2,9 @@ import { Description, Dialog, DialogPanel, DialogTitle } from '@headlessui/react
 import { useEffect, useState } from 'react'
 import prefCityData from '../data/prefCity.json';
 import Button from './Button';
+import { PrefCityProps } from '../../types/PrefCity'
 
-type Props = {
-  setPref: (p: string) => void;
-  setCity: (c: string) => void;
-};
-
-export default function DialogPrefCitySelect({ setPref, setCity }: Props) {
+export default function DialogPrefCitySelect({ setPref, setCity }: PrefCityProps) {
   let [isOpen, setIsOpen] = useState(false)
   const [selectedPref, setSelectedPref] = useState<string | null>(null);
 
@@ -19,7 +15,7 @@ export default function DialogPrefCitySelect({ setPref, setCity }: Props) {
     setPref(selectedPref);
     setCity(city);
     setIsOpen(false)
-    setSelectedPref(null)
+    setTimeout(() => setSelectedPref(null), 200); //アニメーションが終わってからリセット
   }
   // ----------------------------------------
   // JSX 
@@ -51,9 +47,9 @@ export default function DialogPrefCitySelect({ setPref, setCity }: Props) {
             <DialogTitle className="font-bold text-lg">
               {selectedPref ? `${selectedPref} の市区を選択` : '都道府県を選択'}
             </DialogTitle>
-            {/* ✅ 都道府県リスト */}
+            {/* 都道府県リスト */}
             {!selectedPref && (
-              <div className="flex flex-wrap gap-3 max-w-2xl mx-auto">
+              <div className="flex flex-wrap gap-3 max-w-2xl mx-auto ">
                 {prefCityData.map((p: any) => (
                   <Button
                     key={p.pref}
@@ -67,7 +63,7 @@ export default function DialogPrefCitySelect({ setPref, setCity }: Props) {
               </div>
 
             )}
-            {/* ✅ 市区リスト */}
+            {/* 市区リスト */}
             {selectedPref && (
               <div className="flex flex-wrap justify-start gap-3">
                 {prefCityData
@@ -77,15 +73,14 @@ export default function DialogPrefCitySelect({ setPref, setCity }: Props) {
                       key={city}
                       onClick={() => { handleSelectCity(city, selectedPref) }}
                       variant="primary"
-                      className='w-24 h-10'
-
+                      className='w-26 h-10 whitespace-nowrap text-sm'
                     >
                       {city}
                     </Button>
                   ))}
               </div>
             )}
-            {/* ✅ 下部ボタン */}
+            {/* 下部ボタン */}
             <div className="flex justify-center mt-4">
               {selectedPref ? (
                 <Button

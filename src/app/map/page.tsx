@@ -1,6 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import React from "react";
+import Link from "next/link"
 
 //　dinamic　を利用
 function MapPage() {
@@ -12,7 +13,12 @@ function MapPage() {
       }),
     []
   );
-  return <Map />;
+  return (
+    <>
+      <Map />
+      <Link href="/">Running Course</Link>
+    </>
+  )
 }
 
 export default MapPage;

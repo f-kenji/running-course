@@ -9,9 +9,8 @@ declare module "leaflet" {
         startIconUrl?: string | null;
         endIconUrl?: string | null;
         shadowUrl?: string | null;
-
       };
-      polyline_options?: any; // ← これを追加
+      polyline_options?: any; // anyでエラー回避
     }
   }
 
