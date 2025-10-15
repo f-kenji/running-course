@@ -2,7 +2,7 @@
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-gpx";
-import GPXLayer from "./gpxlayer";
+import GPXLayer from "@/app/components/gpxlayer";
 
 export default function Map() {
   return (

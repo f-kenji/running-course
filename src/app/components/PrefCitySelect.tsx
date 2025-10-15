@@ -1,9 +1,9 @@
 // /components/PrefCitySelect.tsx
 'use client';
 import { useState, useEffect } from 'react';
-import prefCityData from '../data/prefCity.json';
-import DialogPrefCitySelect from './DialogPrefCitySelect';
-import { PrefCityProps } from '../../types/PrefCity'
+import prefCityData from '@/app/data/prefCity.json';
+import DialogPrefCitySelect from '@/app/components/DialogPrefCitySelect';
+import { PrefCityProps } from '@/types/PrefCity'
 
 export default function PrefCitySelect({ pref, city, setPref, setCity }: PrefCityProps) {
   const [cities, setCities] = useState<string[]>([]);

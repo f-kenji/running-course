@@ -1,8 +1,8 @@
-import { Description, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
-import { useEffect, useState } from 'react'
-import prefCityData from '../data/prefCity.json';
-import Button from './Button';
-import { PrefCityProps } from '../../types/PrefCity'
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
+import { useState } from 'react'
+import prefCityData from '@/app/data/prefCity.json';
+import Button from '@/app/components/Button';
+import { PrefCityProps } from '@/types/PrefCity'
 
 export default function DialogPrefCitySelect({ setPref, setCity }: PrefCityProps) {
   let [isOpen, setIsOpen] = useState(false)

@@ -34,3 +34,11 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+Step 1	Supabase初期設定	DB・APIキー・接続確認
+Step 2	DB設計	users / courses テーブル作成
+Step 3	認証	ログイン・ユーザー登録機能
+Step 4	投稿	投稿フォーム → DB保存
+Step 5	一覧・詳細	表示・ルーティング
+Step 6	いいね・コメントなど拡張	UI強化・SNS的要素追加

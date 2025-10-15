@@ -3,8 +3,13 @@
 import { useState } from 'react';
 import Link from "next/link"
 // import { supabase } from '../../lib/supabaseClient';
-import PrefCitySelect from '../components/PrefCitySelect';
-import Button from '../components/Button';
+import PrefCitySelect from '@/app/components/PrefCitySelect';
+import Button from '@/app/components/Button';
+
+// ----------------------------------------
+// CSS 
+// ----------------------------------------
+const inputStyle = "border border-gray-300 rounded-xl"
 
 export default function UploadPage() {
   const [title, setTitle] = useState('');
@@ -100,18 +105,21 @@ export default function UploadPage() {
               value={title}
               onChange={e => setTitle(e.target.value)}
               required
-              className="w-full p-2 border border-gray-300 rounded-md" />
+              className={`w-full p-2  ${inputStyle}`} />
             <textarea
               placeholder="説明"
               value={description}
               onChange={e => setDescription(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md " />
-            <input
-              type="number"
-              placeholder="距離(km)"
-              value={distance}
-              onChange={e => setDistance(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md" />
+              className={`w-full p-2  ${inputStyle}`} />
+            <div>
+              <input
+                type="number"
+                placeholder="距離(km)"
+                value={distance}
+                onChange={e => setDistance(e.target.value)}
+                className={`w-sm p-2 ${inputStyle}`} />
+                <span className="ml-2">km</span>
+            </div>
             <PrefCitySelect
               pref={pref}
               city={city}
@@ -122,12 +130,12 @@ export default function UploadPage() {
               accept=".gpx"
               onChange={e => setGpxFile(e.target.files?.[0] || null)}
               required
-              className="border border-gray-300 rounded-md" />
+              className={inputStyle} />
             <input
               type="file"
               accept="image/*"
               onChange={e => setThumbnail(e.target.files?.[0] || null)}
-              className="border border-gray-300 rounded-md" />
+              className={inputStyle} />
             <Button
               type="submit"
               disabled={loading}
