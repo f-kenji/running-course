@@ -7,7 +7,7 @@ import Link from "next/link"
 function MapPage() {
   const Map = React.useMemo(
     () =>
-      dynamic(() => import("../components/map"), {
+      dynamic(() => import("@/app/components/features/map"), {
         loading: () => <p>A map is loading</p>,
         ssr: false,
       }),

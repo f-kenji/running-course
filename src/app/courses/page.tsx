@@ -1,5 +1,5 @@
 // app/courses/page.tsx
-import { supabase } from '@/utils/supabaseClient'
+import { supabase } from '@/lib/supabase/client'
 import type { Database } from '@/types/database.types'
 import Link from 'next/link'
 
@@ -20,7 +20,7 @@ export default async function CoursesPage() {
         return <p>コースが登録されていません。</p>
     }
 
-    console.log(courses)
+    // console.log(courses)
 
     return (
         <div className="p-6 space-y-4">

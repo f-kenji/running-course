@@ -4,7 +4,7 @@ import Link from "next/link";
 // ----------------------------------------
 // CSS 
 // ----------------------------------------
-const linkStyle = "bg-rose-600 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+const linkStyle = "bg-rose-600 text-white px-4 py-2 rounded-xl hover:bg-rose-800 transition"
 
 export default function Home() {
   
@@ -29,6 +29,12 @@ export default function Home() {
           className={linkStyle}
         >
           コース一覧
+        </Link>
+                <Link
+          href="/google"
+          className={linkStyle}
+        >
+          ログイン
         </Link>
       </div>
     </main>
