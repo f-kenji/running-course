@@ -1,3 +1,4 @@
+// src\app\loginGoogle\page.tsx
 "use client";
 import { supabase } from "@/lib/supabase/client";
 
@@ -6,7 +7,8 @@ export default function GoogleLogin() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`, // ←リダイレクト先
+        // redirectTo: `${window.location.origin}/auth/callback`, // ←リダイレクト先
+        redirectTo: `http://localhost:4000/auth/callback`, // ←リダイレクト先
       },
     });
     if (error) console.error("Login error:", error);
@@ -14,10 +16,11 @@ export default function GoogleLogin() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-2xl mb-4">Googleでログイン</h1>
+      <h2 className="text-xl mb-4">ログイン</h2>
+      <div className="text-base mb-2">ソーシャルログインで登録</div>
       <button
         onClick={handleGoogleLogin}
-        className="bg-rose-500 text-white px-4 py-2 rounded-md hover:bg-rose-600 transition"
+        className="bg-rose-500 text-white px-4 py-2 rounded-xl hover:bg-rose-600 transition"
       >
         Googleでログイン
       </button>

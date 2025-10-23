@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/app/components/features/header";
+import { UserProvider } from "@/context/UserContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "ランニングコース",
-  description: "ランニングコースを投稿、共有しよう",
+  description:
+    "うちの近所でランニングできるところ、旅行先や出張先でも走れるコースを探せるランナーのための共有アプリ。",
 };
 
 export default function RootLayout({
@@ -26,10 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Header />
-        {children}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <UserProvider>
+          <Header />
+          {children}
+        </UserProvider>
       </body>
     </html>
   );

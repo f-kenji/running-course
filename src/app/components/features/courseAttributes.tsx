@@ -12,13 +12,12 @@ type Props = {
 export default function AttributeSelect({ selected, setSelected }: Props) {
     const handleSelect = (category: string, value: string) => {
         setSelected(prev => {
-            // すでに同じ値を選んでいたら解除（＝トグル）
+            // 同じ値を選んでいたら解除（＝トグル）
             if (prev[category] === value) {
                 const newState = { ...prev };
                 delete newState[category];
                 return newState;
             }
-            // 新しい選択をセット
             return { ...prev, [category]: value };
         });
     };
@@ -38,8 +37,7 @@ export default function AttributeSelect({ selected, setSelected }: Props) {
                                     key={opt}
                                     onClick={() => handleSelect(key, opt)}
                                     variant={isSelected ? "secondary" : "tertiary"}
-                                    className={`px-1 ${isSelected ? "bg-rose-600 text-white hover:bg-rose-600" : ""}`}
-                                >
+                                    className={`px-1.5 ${isSelected ? "bg-rose-600 text-white hover:bg-rose-600" : ""}`}>
                                     {opt}
                                 </Button>
                             );

@@ -1,22 +1,37 @@
 import { supabase } from "@/lib/supabase/client";
+import { CourseInsert, CourseRow } from "@/types/course.type";
 
-export type CourseInsert = {
-  title: string;
-  description: string;
-  prefecture: string;
-  city: string;
-  distance: number;
-  gpx_url: string;
-  image_url?: string;
-  attributes?: Record<string, string>;
-  user_id?: string | null;
-};
-
-export async function insertCourse(course: CourseInsert) {
+//-----------------------------------------------
+// function - コース投稿
+//-----------------------------------------------
+export async function insertCourse(
+  course: CourseInsert
+): Promise<{ data: CourseRow[] | null; error: string | null }> {
   const { data, error } = await supabase
     .from("courses")
-    .insert([course]);
+    .insert([course])
+    .select();
+  if (error) {
+    console.error('Error inserting course:', error.message);
+    return { data: null, error: error.message };
+  }
+  return { data, error: null };
+}
 
-  if (error) throw error;
-  return data;
+//-----------------------------------------------
+// function - コース取得
+//-----------------------------------------------
+export async function getCourses(
+  limit = 10
+): Promise<{ data: CourseRow[] | null; error: string | null }> {
+  const { data, error } = await supabase
+    .from('courses')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) {
+    console.error('Error fetching courses:', error.message);
+    return { data: null, error: error.message };
+  }
+  return { data, error: null };
 }

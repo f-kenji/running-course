@@ -82,7 +82,7 @@ export default function GPXLayer({ url }: { url: string }) {
                         setTimeout(animate, interval);
                     }
                 };
-                console.log(latlngs.map(l => ({ lat: l.lat, lng: l.lng })));
+                // console.log(latlngs.map(l => ({ lat: l.lat, lng: l.lng })));
                 animate();
             })
             .addTo(map);

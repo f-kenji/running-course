@@ -1,34 +1,23 @@
 // app/courses/page.tsx
-import { supabase } from '@/lib/supabase/client'
-import type { Database } from '@/types/database.types'
+import { getCourses } from '@/lib/supabase/courses'
 import Link from 'next/link'
 
-type Course = Database['public']['Tables']['courses']['Row']
-
 export default async function CoursesPage() {
-    const { data: courses, error } = await supabase
-        .from('courses')
-        .select('*')
-        .order('created_at', { ascending: false })
+    const { data: courses, error } = await getCourses(10)
     if (error) {
-        console.error(error)
-        return <p className="text-red-500">データ取得エラー: {error.message}</p>
+        return <p className="text-red-500">データ取得エラー: {error}</p>;
     }
-
     if (!courses || courses.length === 0) {
-
-        return <p>コースが登録されていません。</p>
+        return <p>コースが登録されていません。</p>;
     }
-
-    // console.log(courses)
-
+    // console.log(" coourese num :",courses.length)
     return (
         <div className="p-6 space-y-4">
             <h1 className="text-2xl font-bold mb-4">🏃‍♂️ ランニングコース一覧</h1>
-            {courses.map((course: Course) => (
+            {courses.map(course => (
                 <div
                     key={course.id}
-                    className="border rounded-lg p-4 hover:shadow transition"
+                    className="shadow-[0_1px_5px_rgba(0,0,0,0.25)] rounded-lg p-4 hover:shadow transition"
                 >
                     <h2 className="text-xl font-semibold">{course.title}</h2>
                     <p className="text-gray-600">{course.description}</p>
