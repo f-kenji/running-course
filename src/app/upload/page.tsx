@@ -2,7 +2,6 @@
 'use client'
 import Link from "next/link"
 import { supabase } from '@/lib/supabase/client'
-import { redirect } from 'next/navigation';
 import UploadForm from "@/app/components/features/uploadForm";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -26,7 +25,10 @@ export default function UploadPage() {
 
   return (
     <>
-      <UploadForm />
+      <div className="max-w-md mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-4">コースを投稿する</h1>
+        <UploadForm />
+      </div >
       <Link href="/">Running Course</Link>
     </>
   );

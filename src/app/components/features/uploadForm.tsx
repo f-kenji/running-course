@@ -5,9 +5,18 @@ import { useEffect, useState } from 'react';
 import PrefCitySelect from '@/app/components/features/pref-city-select';
 import Button from '@/app/components/ui/Button';
 import AttributeSelect from '@/app/components/features/courseAttributes';
-import { insertCourse } from '@/lib/supabase/courses';
+import { insertCourse, updateCourse } from '@/lib/supabase/courses';
+import { uploadGpxFile } from '@/lib/supabase/gpxStorage'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useUser } from '@/context/UserContext';
+import GpxUploadForm from './gpxUploadForm';
+import DynamicMap from "@/app/components/features/dynamicMap";
+import type { CourseInsert, CourseRow } from '@/types/course.type';
+import courseAttributes from '@/app/data/courseAttributes.json';
+
+type UploadFormProps = {
+    course?: CourseRow | null; // ← これがあれば「編集モード」
+};
 
 // ----------------------------------------
 // CSS 
@@ -15,129 +24,132 @@ import { useUser } from '@/context/UserContext';
 const inputStyle = "border border-gray-300 rounded-xl"
 const attStyle = "rounded-xl text-gray-800  border border-rose-400 bg-rose-200 p-1"
 
-//user入れる
+export default function UploadForm({ course }: UploadFormProps) {
+    const { user } = useUser();
 
-export default function UploadForm() {
     // ----------------------------------------
-    // initialize
+    // initialize (course があれば既存データを反映)
     // ----------------------------------------
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [pref, setPref] = useState('');
-    const [city, setCity] = useState('');
-    const [distance, setDistance] = useState('');
+    const [title, setTitle] = useState(course?.title ?? '');
+    const [description, setDescription] = useState(course?.description ?? '');
+    const [pref, setPref] = useState(course?.prefecture ?? '');
+    const [city, setCity] = useState(course?.city ?? '');
+    const [distance, setDistance] = useState(course?.distance?.toString() ?? '');
     const [thumbnail, setThumbnail] = useState<File | null>(null);
-    const [gpxFile, setGpxFile] = useState<File | null>(null);
-    const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
+    const [gpxFile, setGpxFile] = useState<File | string | null>(course?.gpx_url ?? null);
+    const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>(
+        (course?.attributes && typeof course.attributes === 'object' && !Array.isArray(course.attributes))
+            ? (course.attributes as Record<string, string>)
+            : {}
+    );
     const [loading, setLoading] = useState(false);
     const [dbError, setDbError] = useState<string | null>(null);
     const [message, setMessage] = useState('');
     const [snackBarshow, setSnackBarShow] = useState(false);
-    let [dialogOpen, setDialogOpen] = useState(false)
-    const { user } = useUser();
+    const [dialogOpen, setDialogOpen] = useState(false);
 
-    // 仮設定
-    const gpxUrl = "/activity_20443982855.gpx";
+    const attributeKeys = Object.keys(courseAttributes) as (keyof typeof courseAttributes)[];
+
+    // const gpxUrl = "/activity_20443982855.gpx"; // 仮設定
+    // const thumbnailUrl = course?.image_url ?? '';
     const thumbnailUrl = "";
 
     //-----------------------------------------------
-    // eventHandler - コースデータを投稿
+    // eventHandler - 投稿 or 更新
     //-----------------------------------------------
-    const handlePost = async () => {
-        // if (!gpxFile || !title || !pref || !city) return;
-        if (!user) {
-            alert("投稿するにはログインが必要です");
-            return;
-        }
-        setLoading(true);       // ← 処理開始
-        setDbError(null);       // ← 前のエラーをクリア
+    const handleSubmit = async () => {
+        // TODO：コメントアウトをもどす
+        // if (!user) return alert('ログインしてください');
+        // if (!gpxFile && !course?.gpx_url) return alert('GPXファイルが必要です');
+        // if (description.length > 1000) return alert('説明文は1000文字以内にしてください');
+
+        setLoading(true);
+        setDbError(null);
 
         try {
-            // 1. GPXファイルをSupabase Storageにアップロード
-            // const gpxName = `${Date.now()}-${gpxFile.name}`;
-            // const { data: gpxData, error: gpxError } = await supabase
-            //   .storage
-            //   .from('gpx-files')
-            //   .upload(gpxName, gpxFile, { cacheControl: '3600', upsert: false });
+            let gpxData = { url: course?.gpx_url ?? '', path: course?.gpx_path ?? '' };
 
-            // if (gpxError) throw gpxError;
-
-
-            // const gpxUrl = supabase
-            //   .storage
-            //   .from('gpx-files')
-            //   .getPublicUrl(gpxName).data.publicUrl;
-
-            //   // 2. サムネイル画像もあればアップロード
-            //   let thumbnailUrl = '';
-            //   if (thumbnail) {
-            //     const thumbName = `${Date.now()}-${thumbnail.name}`;
-            //     const { error: thumbError } = await supabase
-            //       .storage
-            //       .from('thumbnails')
-            //       .upload(thumbName, thumbnail);
-            //     if (thumbError) throw thumbError;
-
-
-            //     thumbnailUrl = supabase
-            //       .storage
-            //       .from('thumbnails')
-            //       .getPublicUrl(thumbName).data.publicUrl;
-            //   }
-
-            // 3. DBにレコード登録
-            // const { error: dbError } = await supabase
-            //   .from('courses')
-            //   .insert([{
-            //     title,
-            //     description,
-            //     pref,
-            //     city,
-            //     distance: parseFloat(distance),
-            //     gpx_url: gpxUrl,
-            //     thumbnail: thumbnailUrl
-            //   }]);
-
-            // if (dbError) throw dbError;
-
-            const { data, error } = await insertCourse({
-                title,
-                description,
-                prefecture: pref,
-                city,
-                distance: parseFloat(distance),
-                gpx_url: gpxUrl,
-                image_url: thumbnailUrl,
-                attributes: selectedAttributes,
-                user_id: user?.id ?? null,
-            });
-
-            if (data && data.length > 0) {
-                const newCourse = data[0];
-                setMessage(`登録しました\n
-           タイトル：${newCourse.title}`);
+            // 新しいファイルがある場合だけアップロード
+            if (gpxFile instanceof File) {
+                gpxData = await uploadGpxFile(gpxFile, user.id);
             }
 
-            setTitle('');
-            setDescription('');
-            setDistance('');
-            setPref('');
-            setCity('');
-            setThumbnail(null);
-            setGpxFile(null);
-            setSelectedAttributes({})
+            if (course) {
+                // ===== 更新 =====
+                const { data, error } = await updateCourse(course.id, {
+                    title,
+                    description,
+                    prefecture: pref,
+                    city,
+                    distance: parseFloat(distance),
+                    gpx_path: gpxData.path,
+                    gpx_url: gpxData.url,
+                    image_url: thumbnailUrl,
+                    attributes: selectedAttributes,
+                });
 
-            setDialogOpen(false) //ダイアログを閉じる
+                if (error) throw new Error(error);
+                setMessage(`更新しました\n
+                    タイトル：${data?.title}`);
+            } else {
+                // ===== 新規登録 =====
+                const { data, error } = await insertCourse({
+                    title,
+                    description,
+                    prefecture: pref,
+                    city,
+                    distance: parseFloat(distance),
+                    gpx_path: gpxData.path,
+                    gpx_url: gpxData.url,
+                    image_url: thumbnailUrl,
+                    attributes: selectedAttributes,
+                    user_id: user.id,
+                });
 
-            console.log("投稿成功", data);
+                if (error) throw new Error(error);
+                setMessage(`登録しました\n
+                    タイトル：${data?.[0]?.title}`);
+            }
+
+            setDialogOpen(false);
+            if (course) {
+                // 編集モード → 閉じるだけ
+                setDialogOpen(false);
+            } else {
+                // 新規モード → リセット
+                setTitle('');
+                setDescription('');
+                setDistance('');
+                setPref('');
+                setCity('');
+                setThumbnail(null);
+                setGpxFile(null);
+                setSelectedAttributes({});
+                setDialogOpen(false);
+            }
         } catch (error: any) {
-            console.error("DBエラー", error);
+            console.error('DBエラー', error);
             setDbError(error.message);
         } finally {
             setLoading(false);
         }
-
     };
+    //-----------------------------------------------
+    // eventHandler - 投稿ダイアログを開く、入力チェック
+    //-----------------------------------------------
+    const handleDialogOpen = () => {
+        // if (!gpxFile || !title || !pref || !city) return;
+
+        // ユーザーがログインしているか
+        // TODO：コメントアウトをもどす
+        // if (!user) return alert('ログインしてください');
+        // GPXファイルがあるか
+        if (!gpxFile && !course?.gpx_url) return alert('GPXファイルが必要です');
+        // 説明文の文字数チェック
+        if (description.length > 1000) return alert('説明文は1000文字以内にしてください');
+        // ダイアログを開く
+        setDialogOpen(true);
+    }
     // ----------------------------------------
     //useeffect - タイトルの挿入
     // ----------------------------------------
@@ -159,123 +171,129 @@ export default function UploadForm() {
     // ----------------------------------------
     // JSX 
     // ----------------------------------------
-    // console.log('選択された市区:', pref, city)
-    // console.log("title", title);
-    // console.log("description", description);
-    // console.log("distance",parseFloat(distance))
-    // console.log(gpxUrl)
-    // console.log(thumbnailUrl)
-    // console.log("selectedAttribute", selectedAttributes)
     return (
         <>
-            <div className="max-w-md mx-auto p-4">
-                <h1 className="text-2xl font-bold mb-4">コースを投稿する</h1>
-                <div className="space-y-4">
-                    <div className="flex flex-col space-y-6">
-                        <PrefCitySelect
-                            pref={pref}
-                            city={city}
-                            setPref={setPref}
-                            setCity={setCity} />
+            <div className="space-y-4">
+                <div className="flex flex-col space-y-6">
+                    <PrefCitySelect
+                        pref={pref}
+                        city={city}
+                        setPref={setPref}
+                        setCity={setCity} />
+                    <input
+                        type="text"
+                        placeholder="タイトル"
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                        required
+                        className={`w-full p-2  ${inputStyle}`} />
+                    <textarea
+                        placeholder="説明"
+                        value={description}
+                        onChange={e => setDescription(e.target.value)}
+                        className={`w-full p-2  ${inputStyle}`} />
+                    <div>
                         <input
-                            type="text"
-                            placeholder="タイトル"
-                            value={title}
-                            onChange={e => setTitle(e.target.value)}
-                            required
-                            className={`w-full p-2  ${inputStyle}`} />
-                        <textarea
-                            placeholder="説明"
-                            value={description}
-                            onChange={e => setDescription(e.target.value)}
-                            className={`w-full p-2  ${inputStyle}`} />
-                        <div>
-                            <input
-                                type="number"
-                                placeholder="距離(km)"
-                                value={distance}
-                                onChange={e => setDistance(e.target.value)}
-                                className={`w-sm p-2 ${inputStyle}`} />
-                            <span className="ml-2">km</span>
-                        </div>
-                        <input
-                            type="file"
-                            accept=".gpx"
-                            onChange={e => setGpxFile(e.target.files?.[0] || null)}
-                            required
-                            className={inputStyle} />
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={e => setThumbnail(e.target.files?.[0] || null)}
-                            className={inputStyle} />
-                        <AttributeSelect selected={selectedAttributes} setSelected={setSelectedAttributes} />
-                        <Button
-                            type="button"
-                            disabled={loading}
-                            variant="primary"
-                            className="w-24 px-4 py-2"
-                            onClick={() => setDialogOpen(true)}>
-                            {loading ? '投稿中...' : '投稿'}
-                        </Button>
+                            type="number"
+                            placeholder="距離(km)"
+                            value={distance}
+                            onChange={e => setDistance(e.target.value)}
+                            className={`w-sm p-2 ${inputStyle}`} />
+                        <span className="ml-2">km</span>
                     </div>
-                    {/* スナックバー */}
-                    <div
-                        className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 
-              px-4 py-2 rounded-xl shadow-md whitespace-pre-line leading-[0.7]
-              bg-rose-200 text-rose-600 border border-rose-400
-              transition-all duration-100
-              ${snackBarshow ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                        {message}
-                    </div>
+                    <GpxUploadForm
+                        inputStyle={inputStyle}
+                        gpxFile={gpxFile}
+                        setGpxFile={setGpxFile}
+                        isEdit={!!course}
+                        existingGpxUrl={course?.gpx_url}
+                    />
+                    <AttributeSelect selected={selectedAttributes} setSelected={setSelectedAttributes} />
+                    <Button
+                        type="button"
+                        disabled={loading}
+                        variant="primary"
+                        className="w-24 px-4 py-2"
+                        onClick={handleDialogOpen}>
+                        {loading ? '投稿中...' : '投稿'}
+                    </Button>
                 </div>
-                {/* 投稿確認ダイアログ */}
-                <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}
-                    className="fixed inset-0 z-50 flex items-center justify-center">
-                    <DialogPanel
-                        transition
-                        className="shadow-[0_8px_30px_rgba(0,0,0,0.25)] max-w-3xl w-full 
-            space-y-6 bg-white p-12 rounded-3xl text-center max-h-[80vh] overflow-y-auto
-            duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
-                        <DialogTitle className="font-bold text-lg">
-                            以下の内容で投稿します、よろしいですか？
-                        </DialogTitle>
-                        <div className='flex items-center justify-center'>
-                            <div className="text-2xl font-bold space-y-1 text-left">
-                                <div><span className='text-base'>エリア：</span>{`${pref} ${city}`}</div>
-                                <div><span className='text-base'>タイトル：</span>{`${title}`}</div>
-                                <div className='text-sm font-light '>説明：</div>
-                                <div className='text-xs indent-3 whitespace-normal max-w-[400px]'>{description}</div>
-                                <div><span className='text-base'>距離：</span>{`${distance}`} km</div>
-                                <div className='flex text-[12px] font-medium gap-2 max-w-[400px] flex-wrap'>
-                                    <p className={`${attStyle} empty:hidden`}>{selectedAttributes.time}</p>
-                                    <p className={`${attStyle} empty:hidden`}>{selectedAttributes.terrain}</p>
-                                    <p className={`${attStyle} empty:hidden`}>{selectedAttributes.surface}</p>
-                                    <p className={`${attStyle} empty:hidden`}>{selectedAttributes.traffic}</p>
-                                    <p className={`${attStyle} empty:hidden`}>{selectedAttributes.lighting}</p>
-                                    <p className={`${attStyle} empty:hidden`}>{selectedAttributes.signal}</p>
-                                    <p className={`${attStyle} empty:hidden`}>{selectedAttributes.shade}</p>
-                                    <p className={`${attStyle} empty:hidden`}>{selectedAttributes.rain}</p>
-                                    <p className={`${attStyle} empty:hidden`}>{selectedAttributes.scenery}</p>
-                                </div>
+                {/* スナックバー */}
+                <div
+                    className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 
+                    px-4 py-2 rounded-xl shadow-md whitespace-pre-line leading-[0.7]
+                    bg-rose-200 text-rose-600 border border-rose-400
+                    transition-all duration-100
+                    ${snackBarshow ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    {message}
+                </div>
+            </div>
+            {/* 投稿確認ダイアログ */}
+            <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}
+                className="fixed inset-0 z-50 flex items-center justify-center">
+                <DialogPanel
+                    transition
+                    className="shadow-[0_8px_30px_rgba(0,0,0,0.25)] max-w-3xl w-full 
+                            space-y-6 bg-white p-12 rounded-3xl text-center max-h-[80vh] overflow-y-auto
+                            duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0">
+                    <DialogTitle className="font-bold text-lg">
+                        以下の内容で投稿します、よろしいですか？
+                    </DialogTitle>
+                    <div className='text-2xl font-bold '>
+                        <p><span className='text-base'>エリア：</span>{`${pref} ${city}`}</p>
+                        <p><span className='text-base'>タイトル：</span>{`${title}`}</p>
+                    </div>
+                    {/* マップ表示 */}
+                    <DynamicMap
+                        url={typeof gpxFile === 'string'
+                            ? gpxFile
+                            : gpxFile
+                                ? URL.createObjectURL(gpxFile)
+                                : ''
+                        }
+                    />
+                    <div className='flex items-center justify-center'>
+                        <div className="font-bold space-y-1 text-left">
+                            <div className='text-sm font-light '>説明：</div>
+                            <div className='text-xs indent-3 whitespace-normal max-w-[400px]'>{description}</div>
+                            <div><span className='text-base'>距離：</span>{`${distance}`} km</div>
+                            {/* コース属性 */}
+                            <div className='flex text-[12px] font-medium gap-2 max-w-[400px] flex-wrap'>
+                                {attributeKeys.map((key) => {
+                                    const value = selectedAttributes[key as string]; // selectedAttributes の型が Record<string,string>
+                                    return value ? (
+                                        <p key={String(key)} className={attStyle}>
+                                            {value}
+                                        </p>
+                                    ) : null;
+                                })}
                             </div>
                         </div>
-                        <div className='flex gap-2 items-center justify-center'>
-                            <Button
-                                onClick={handlePost}
-                                disabled={loading}
-                                variant="primary"
-                                className='w-24 px-4 py-2'>
-                                {loading ? '投稿中...' : 'OK'}
-                            </Button>
-                            <Button onClick={() => setDialogOpen(false)}
-                                variant="primary"
-                                className='px-4 py-2'
-                            >キャンセル</Button>
-                        </div>
-                    </DialogPanel>
-                </Dialog >
-            </div >
+                    </div>
+                    <div className='flex gap-2 items-center justify-center'>
+                        <Button
+                            onClick={handleSubmit}
+                            disabled={loading}
+                            variant="primary"
+                            className='px-4 py-2'>
+                            {loading ? (
+                                <>
+                                    <span className="inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin "></span>
+                                    投稿中...
+                                </>
+                            ) : (
+                                'OK'
+                            )}
+                        </Button>
+                        <Button onClick={() => setDialogOpen(false)}
+                            variant="primary"
+                            className='px-4 py-2'
+                        >キャンセル</Button>
+                    </div>
+                    <p className='text-sm text-left'>この投稿には自宅や職場など特定されうる場所が含まれる場合があります。投稿前に位置情報をご確認ください。
+                        また、現在ストレージ容量に限りがあるため、一時的に投稿できないことがあります。</p>
+                </DialogPanel>
+            </Dialog >
         </>
     )
 }

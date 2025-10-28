@@ -10,7 +10,7 @@ export default async function CoursesPage() {
     if (!courses || courses.length === 0) {
         return <p>コースが登録されていません。</p>;
     }
-    // console.log(" coourese num :",courses.length)
+    // console.log(" coourese :",courses)
     return (
         <div className="p-6 space-y-4">
             <h1 className="text-2xl font-bold mb-4">🏃‍♂️ ランニングコース一覧</h1>

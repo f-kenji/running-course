@@ -24,7 +24,7 @@ export default function Header() {
 
     // console.log(user);
     return (
-        <header className="flex justify-between items-center mb-2 ml-6 mr-6">
+        <header className="flex justify-between items-center mb-2 ml-6 mr-6 z-50">
             <h1 className=" text-rose-600 font-bold text-xl p-2 ">
                 <Link href="/">Running Course</Link>
             </h1>
@@ -37,7 +37,7 @@ export default function Header() {
                             onClick={() => {
                                 supabase.auth.signOut()
                                 router.push("/")
-                                }}>
+                            }}>
                             ログアウト</button>
                     </div>
                 ) : (

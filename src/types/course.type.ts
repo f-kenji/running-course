@@ -9,6 +9,7 @@ export type CourseAttributes = {
   signal?: string;
   shade?: string;
   rain?: string;
+  scenery?: string;
 };
 
 export type CourseInsert = {
@@ -17,10 +18,14 @@ export type CourseInsert = {
   prefecture: string;
   city: string;
   distance: number;
+  gpx_path: string;
   gpx_url: string;
   image_url?: string;
   attributes?: Record<string, string>;
   user_id?: string | null;
 };
 
-export type CourseRow = Database['public']['Tables']['courses']['Row']
+// CourseRow の型定義
+export type CourseRow = Omit<Database['public']['Tables']['courses']['Row'], 'attributes'> & {
+  attributes: CourseAttributes;
+};
