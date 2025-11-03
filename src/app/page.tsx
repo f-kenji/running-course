@@ -74,9 +74,7 @@ export default function Home() {
   if (!courses || courses.length === 0) {
     return <p>コースが登録されていません。</p>;
   }
-  // console.log("courses :", courses);
-  // const attr = courses[0].attributes;
-  // console.log((courses[0].attributes as Record<string, string>)?.terrain);  // "起伏多い"
+
   return (
     <main className="p-6 text-center ">
       {/* <h1 className="text-2xl font-bold mb-4">ランニングコース共有アプリ</h1> */}
@@ -101,16 +99,18 @@ export default function Home() {
                 key={course.id}
                 className="shadow-[0_1px_5px_rgba(0,0,0,0.25)] rounded-4xl p-3 hover:shadow transition
                 flex flex-col h-110">
-                <h2 className="text-xl font-semibold">{course.title}</h2>
-                <DynamicMap url={course.gpx_url ?? ""} />
-                <p className="text-gray-600 line-clamp-2">{course.description}</p>
-                {course.distance && (
-                  <>
-                    <p className="text-sm text-gray-500 py-1">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-center flex-1">
+                    {course.title}
+                  </h2>
+                  {course.distance && (
+                    <p className="text-sm text-gray-500 ml-4 whitespace-nowrap">
                       距離: {course.distance} km
                     </p>
-                  </>
-                )}
+                  )}
+                </div>
+                <DynamicMap url={course.gpx_url ?? ""} />
+                <p className="text-gray-600 line-clamp-2">{course.description}</p>
                 {/* コース属性 */}
                 <div className='flex text-[12px] font-medium gap-2 max-w-[400px] flex-wrap py-1'>
                   {attributeKeys.map((key) => {

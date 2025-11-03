@@ -1,4 +1,3 @@
-import { CourseRow } from "@/types/course.type";
 import Button from "../ui/Button";
 
 type Props = {
@@ -10,7 +9,7 @@ type Props = {
 };
 
 export default function GpxUploadForm({ inputStyle, gpxFile, setGpxFile, isEdit, existingGpxUrl }: Props) {
-    console.log("gpxFile", gpxFile)
+    // console.log("gpxFile", gpxFile)
     return (
         <>
             <label className="block mb-1 font-medium">
@@ -21,9 +20,9 @@ export default function GpxUploadForm({ inputStyle, gpxFile, setGpxFile, isEdit,
                 htmlFor="gpx-upload"
                 className=" w-110 border-2 border-rose-200 bg-white hover:bg-rose-100 rounded-xl text-center cursor-pointer py-1"
             >
-                {gpxFile ? (gpxFile instanceof File ? gpxFile.name : gpxFile.split("/").pop()) : "GPXを選択"}
+                {gpxFile ? (gpxFile instanceof File ? gpxFile.name : gpxFile.split("-").pop()) : "GPXを選択"}
             </label>
-                {gpxFile && (
+                {gpxFile && !isEdit && (
                     <Button
                         type="button"
                         onClick={() => setGpxFile(null)}
@@ -44,7 +43,7 @@ export default function GpxUploadForm({ inputStyle, gpxFile, setGpxFile, isEdit,
             </div>
             {isEdit && existingGpxUrl && (
                 <p className="text-sm text-gray-500">
-                    現在のファイル: {existingGpxUrl?.split('/').pop()}
+                    現在のファイル: {existingGpxUrl?.split('-').pop()}
                 </p>
             )}
         </>

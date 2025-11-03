@@ -59,9 +59,9 @@ export default function UploadForm({ course }: UploadFormProps) {
     //-----------------------------------------------
     const handleSubmit = async () => {
         // TODO：コメントアウトをもどす
-        // if (!user) return alert('ログインしてください');
-        // if (!gpxFile && !course?.gpx_url) return alert('GPXファイルが必要です');
-        // if (description.length > 1000) return alert('説明文は1000文字以内にしてください');
+        if (!user) return alert('ログインしてください');
+        if (!gpxFile && !course?.gpx_url) return alert('GPXファイルが必要です');
+        if (description.length > 1000) return alert('説明文は1000文字以内にしてください');
 
         setLoading(true);
         setDbError(null);
@@ -139,10 +139,9 @@ export default function UploadForm({ course }: UploadFormProps) {
     //-----------------------------------------------
     const handleDialogOpen = () => {
         // if (!gpxFile || !title || !pref || !city) return;
-
         // ユーザーがログインしているか
         // TODO：コメントアウトをもどす
-        // if (!user) return alert('ログインしてください');
+        if (!user) return alert('ログインしてください');
         // GPXファイルがあるか
         if (!gpxFile && !course?.gpx_url) return alert('GPXファイルが必要です');
         // 説明文の文字数チェック
@@ -255,7 +254,7 @@ export default function UploadForm({ course }: UploadFormProps) {
                     <div className='flex items-center justify-center'>
                         <div className="font-bold space-y-1 text-left">
                             <div className='text-sm font-light '>説明：</div>
-                            <div className='text-xs indent-3 whitespace-normal max-w-[400px]'>{description}</div>
+                            <div className='text-xs font-medium indent-3 whitespace-normal max-w-[400px]'>{description}</div>
                             <div><span className='text-base'>距離：</span>{`${distance}`} km</div>
                             {/* コース属性 */}
                             <div className='flex text-[12px] font-medium gap-2 max-w-[400px] flex-wrap'>
@@ -270,15 +269,15 @@ export default function UploadForm({ course }: UploadFormProps) {
                             </div>
                         </div>
                     </div>
-                    <div className='flex gap-2 items-center justify-center'>
+                    <div className='flex gap-3 items-center justify-center'>
                         <Button
                             onClick={handleSubmit}
                             disabled={loading}
                             variant="primary"
-                            className='px-4 py-2'>
+                            className='px-4 py-2 w-32'>
                             {loading ? (
                                 <>
-                                    <span className="inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin "></span>
+                                    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
                                     投稿中...
                                 </>
                             ) : (
@@ -287,10 +286,10 @@ export default function UploadForm({ course }: UploadFormProps) {
                         </Button>
                         <Button onClick={() => setDialogOpen(false)}
                             variant="primary"
-                            className='px-4 py-2'
+                            className='px-4 py-2 w-32'
                         >キャンセル</Button>
                     </div>
-                    <p className='text-sm text-left'>この投稿には自宅や職場など特定されうる場所が含まれる場合があります。投稿前に位置情報をご確認ください。
+                    <p className='text-sm text-left'>この投稿には自宅や職場などが特定されうる場所が含まれる場合があります。投稿前に位置情報をご確認ください。
                         また、現在ストレージ容量に限りがあるため、一時的に投稿できないことがあります。</p>
                 </DialogPanel>
             </Dialog >

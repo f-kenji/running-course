@@ -1,4 +1,4 @@
-export function formatDate(dateString: string | null, withSeconds = true): string {
+export function formatDate(dateString: string | null, withSeconds = false): string {
   if (!dateString) return '不明';
   const date = new Date(dateString);
 

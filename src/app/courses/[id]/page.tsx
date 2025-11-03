@@ -85,14 +85,14 @@ export default function CourseDetail() {
   // ----------------------------------------
   // console.log("user", user);
   return (
-    <div className="max-w-4xl m-auto p-4">
+    <div className="max-w-4xl m-auto px-8">
       <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
       <div className='text-xl '>
         <p><span className='text-base'>エリア：</span>{`${course.prefecture} ${course.city}`}</p>
       </div>
       {course.gpx_url && <DynamicMap url={course.gpx_url} />}
       {course.distance && <p className="text-xl">距離: {course.distance} km</p>}
-      <p className="mt-2">{course.description}</p>
+      <p className="mt-1 px-2">{course.description}</p>
       {/* コース属性 */}
       <div className='flex text-[12px] font-medium gap-2 max-w-[400px] flex-wrap py-2'>
         {attributeKeys.map((key) => {
@@ -106,27 +106,41 @@ export default function CourseDetail() {
           );
         })}
       </div>
+      {/* <p className="text-sm text-gray-500">
+        作成者ID:
+        {user?.display_name
+          ? user.display_name
+          : course.user_id
+            ? `ゲスト****${course.user_id.slice(-8)}`
+            : 'ゲスト'}</p> */}
       <p className="text-sm text-gray-500">
-        作成者ID:{user?.display_name ? user.display_name : `ゲスト****${course.user_id?.slice(-8)}`}</p>
+        作成者:
+        {user?.display_name
+          ? `${user.display_name}（ID: ****${course.user_id?.slice(-6) ?? '不明'}）`
+          : course.user_id
+            ? `ゲスト（ID: ****${course.user_id.slice(-6)}）`
+            : 'ゲスト（ID: 未登録）'}
+      </p>
       <p className="text-sm text-gray-500">更新日:{formatDate(course.updated_at)}</p>
-      {/* {user?.id === course.user_id && ( */}
-      <div className="flex gap-2 mt-2">
-        <Button
-          className="px-2 py-1 rounded"
-          variant="primary"
-          onClick={handleEdit}
-        >
-          編集
-        </Button>
-        <Button
-          className="px-2 py-1 rounded"
-          variant="tertiary"
-          onClick={handleDelete}
-        >
-          削除
-        </Button>
-      </div>
-      {/* )} */}
+      {/* 詳細ページが該当のユーザーの場合、編集可能 */}
+      {user?.id === course.user_id && (
+        <div className="flex gap-2 mt-2">
+          <Button
+            className="px-2 py-1 rounded"
+            variant="primary"
+            onClick={handleEdit}
+          >
+            編集
+          </Button>
+          <Button
+            className="px-2 py-1 rounded"
+            variant="tertiary"
+            onClick={handleDelete}
+          >
+            削除
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

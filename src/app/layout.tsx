@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ランニングコース",
+  title: "CourseFi コースファイ",
   description:
     "うちの近所でランニングできるところ、旅行先や出張先でも走れるコースを探せるランナーのための共有アプリ。",
 };

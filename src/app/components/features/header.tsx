@@ -26,12 +26,23 @@ export default function Header() {
     return (
         <header className="flex justify-between items-center mb-2 ml-6 mr-6 z-50">
             <h1 className=" text-rose-600 font-bold text-xl p-2 ">
-                <Link href="/">Running Course</Link>
+                <Link href="/">CourseFi</Link>
             </h1>
             <div className="flex items-center">
                 {user ? (
                     <div className="">
-                        <span className="text-sm">{user?.display_name ? user.display_name : 'ゲスト(ログイン済み)'}</span>
+                        <span className="text-sm">
+                            {user?.display_name
+                                ? `${user.display_name}（ID: ****${user.id?.slice(-6) ?? '不明'}）`
+                                : user.id
+                                    ? `ゲスト（ID: ****${user.id.slice(-6)}）`
+                                    : 'ゲスト（ID: 未登録）'}
+                            {/* {user?.display_name
+                                ? user.display_name
+                                : user.id
+                                    ? `ゲスト****${user.id.slice(-8)}`
+                                    : 'ゲスト'} */}
+                        </span>
                         <button
                             className={linkStyle}
                             onClick={() => {
