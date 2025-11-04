@@ -2,7 +2,7 @@
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-gpx";
-import GPXLayer from "@/app/components/features/gpx-layer";
+import GPXLayer from "@/app/components/features/gpxLayer";
 import { MapProps } from "@/types/map.types";
 
 export default function Map({ url }: MapProps) {

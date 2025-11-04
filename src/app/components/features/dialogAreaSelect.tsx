@@ -2,7 +2,7 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { useState } from 'react'
 import prefCityData from '@/app/data/prefCity.json';
 import Button from '@/app/components/ui/Button';
-import { PrefCityProps } from '@/types/PrefCity'
+import { PrefCityProps } from '@/types/prefCity'
 
 export default function DialogPrefCitySelect({ setPref, setCity }: PrefCityProps) {
   let [isOpen, setIsOpen] = useState(false)

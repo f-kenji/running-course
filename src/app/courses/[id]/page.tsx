@@ -91,7 +91,7 @@ export default function CourseDetail() {
         <p><span className='text-base'>エリア：</span>{`${course.prefecture} ${course.city}`}</p>
       </div>
       {course.gpx_url && <DynamicMap url={course.gpx_url} />}
-      {course.distance && <p className="text-xl">距離: {course.distance} km</p>}
+      {course.distance && <p className="text-xl">距離 : {course.distance} km</p>}
       <p className="mt-1 px-2">{course.description}</p>
       {/* コース属性 */}
       <div className='flex text-[12px] font-medium gap-2 max-w-[400px] flex-wrap py-2'>

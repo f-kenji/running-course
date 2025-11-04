@@ -1,4 +1,4 @@
-// src/types/PrefCity.ts
+// src/types/prefCity.ts
 export type PrefCityProps = {
   pref?: string;
   city?: string;

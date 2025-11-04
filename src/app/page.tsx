@@ -105,7 +105,7 @@ export default function Home() {
                   </h2>
                   {course.distance && (
                     <p className="text-sm text-gray-500 ml-4 whitespace-nowrap">
-                      距離: {course.distance} km
+                      距離 : {course.distance} km
                     </p>
                   )}
                 </div>

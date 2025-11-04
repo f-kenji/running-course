@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useEffect, useState } from 'react';
-import PrefCitySelect from '@/app/components/features/pref-city-select';
+import PrefCitySelect from '@/app/components/features/prefCitySelect';
 import Button from '@/app/components/ui/Button';
 import AttributeSelect from '@/app/components/features/courseAttributes';
 import { insertCourse, updateCourse } from '@/lib/supabase/courses';
@@ -255,7 +255,7 @@ export default function UploadForm({ course }: UploadFormProps) {
                         <div className="font-bold space-y-1 text-left">
                             <div className='text-sm font-light '>説明：</div>
                             <div className='text-xs font-medium indent-3 whitespace-normal max-w-[400px]'>{description}</div>
-                            <div><span className='text-base'>距離：</span>{`${distance}`} km</div>
+                            <div><span className='text-base'>距離 ：</span>{`${distance}`} km</div>
                             {/* コース属性 */}
                             <div className='flex text-[12px] font-medium gap-2 max-w-[400px] flex-wrap'>
                                 {attributeKeys.map((key) => {

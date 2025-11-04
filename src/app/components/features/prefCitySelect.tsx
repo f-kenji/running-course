@@ -2,8 +2,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import prefCityData from '@/app/data/prefCity.json';
-import DialogPrefCitySelect from '@/app/components/features/dialog-area-select';
-import { PrefCityProps } from '@/types/PrefCity'
+import DialogPrefCitySelect from '@/app/components/features/dialogAreaSelect';
+import { PrefCityProps } from '@/types/prefCity'
 
 export default function PrefCitySelect({ pref, city, setPref, setCity }: PrefCityProps) {
   const [cities, setCities] = useState<string[]>([]);

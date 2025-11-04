@@ -23,7 +23,7 @@ export default async function CoursesPage() {
                     <p className="text-gray-600">{course.description}</p>
                     {course.distance && (
                         <p className="mt-2 text-sm text-gray-500">
-                            距離: {course.distance} km
+                            距離 : {course.distance} km
                         </p>
                     )}
                 </div>
