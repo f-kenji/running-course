@@ -85,12 +85,6 @@ export default function Home() {
             className="w-6 h-6"
             onClick={handleClick} />
         </button>
-        {/* <Link
-          href="/courses"
-          className={linkStyle}
-        >
-          コース一覧
-        </Link> */}
         <h2 className="text-1xl font-bold mt-2">最新の投稿</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2">
           {courses.map(course => (
