@@ -46,10 +46,10 @@ export async function GET(request: Request) {
   const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
   if (exchangeError) {
-    console.error("❌ Session exchange error:", exchangeError);
+    console.error("Session exchange error:", exchangeError);
     return NextResponse.redirect(`${url.origin}/loginGoogle`);
   }
 
-  console.log("✅ Session exchanged successfully");
+  console.log("Session exchanged successfully");
   return response;
 }

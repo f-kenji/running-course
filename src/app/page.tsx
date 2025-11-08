@@ -16,7 +16,6 @@ const attributeKeys = Object.keys(courseAttributes);
 // ----------------------------------------
 // CSS 
 // ----------------------------------------
-// const linkStyle = "bg-rose-600 text-white px-4 py-2 rounded-xl hover:bg-rose-800 transition"
 const attStyle = "rounded-xl text-gray-800  border border-rose-400 bg-rose-200 p-1"
 
 export default function Home() {
@@ -28,7 +27,7 @@ export default function Home() {
 
   const [courses, setCourses] = useState<CourseRow[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); // ← ローディング状態追加 
+  const [loading, setLoading] = useState(true); 
   // ----------------------------------------
   // useEffect - コースの取得
   // ----------------------------------------
