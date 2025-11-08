@@ -4,35 +4,39 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
-  const response = NextResponse.next({ request });
+
+  const response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
+        getAll() {
+          return request.cookies.getAll();
         },
-        set(name: string, value: string, options: any) {
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-        },
-        remove(name: string, options: any) {
-          response.cookies.set({
-            name,
-            value: "",
-            ...options,
-            maxAge: 0,
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            // Secure 属性を localhost では外す
+            const isLocalhost =
+              request.headers.get("host")?.includes("localhost") ?? false;
+            response.cookies.set({
+              name,
+              value,
+              ...options,
+              secure: !isLocalhost,
+            });
           });
         },
       },
     }
   );
 
-  await supabase.auth.getUser();
+  await supabase.auth.getSession();
+
   return response;
 }
