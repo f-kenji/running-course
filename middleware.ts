@@ -1,52 +1,52 @@
-// middleware.ts
-import { createServerClient } from "@supabase/ssr";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
-  // Auth callback中はスキップ
+  // callback は除外
   if (req.nextUrl.pathname.startsWith("/auth/callback")) {
-    return NextResponse.next();
+    return NextResponse.next()
   }
 
-  const res = NextResponse.next();
+  const res = NextResponse.next()
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value;
+        getAll() {
+          return req.cookies.getAll()
         },
-        set(name: string, value: string, options: any) {
-          res.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-        },
-        remove(name: string, options: any) {
-          res.cookies.set({
-            name,
-            value: "",
-            ...options,
-            maxAge: 0,
-          });
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            res.cookies.set(name, value, options)
+          )
         },
       },
     }
-  );
+  )
 
-  // 現在のユーザーを確認
-  const { data: { user } } = await supabase.auth.getUser();
-  console.log("Middleware user:", user?.email ?? "未ログイン");
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession()
 
-  return res;
+  if (error) {
+    console.error("Middleware session error:", error.message)
+  }
+
+  if (session?.user) {
+    console.log("Middleware user:", session.user.email)
+  } else {
+    console.log("Middleware user: 未ログイン")
+  }
+
+  return res
 }
 
 export const config = {
   matcher: [
     "/((?!_next/static|_next/image|favicon.ico|auth/callback).*)",
   ],
-};
+}
