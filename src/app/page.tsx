@@ -16,25 +16,24 @@ const attributeKeys = Object.keys(courseAttributes);
 // ----------------------------------------
 // CSS 
 // ----------------------------------------
-// const linkStyle = "bg-rose-600 text-white px-4 py-2 rounded-xl hover:bg-rose-800 transition"
 const attStyle = "rounded-xl text-gray-800  border border-rose-400 bg-rose-200 p-1"
 
 export default function Home() {
   // ----------------------------------------
   // initialize (course があれば既存データを反映)
   // ----------------------------------------
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser(); 
   const router = useRouter();
 
   const [courses, setCourses] = useState<CourseRow[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); // ← ローディング状態追加 
+  const [coursesLoading, setCoursesLoading] = useState(true);
   // ----------------------------------------
   // useEffect - コースの取得
   // ----------------------------------------
   useEffect(() => {
     const fetchCourses = async () => {
-      setLoading(true);
+      setCoursesLoading(true);
       try {
         const { data, error } = await getCourses(10);
         if (error) {
@@ -45,7 +44,7 @@ export default function Home() {
       } catch (err: any) {
         setError(err.message);
       } finally {
-        setLoading(false);
+        setCoursesLoading(false);
       }
     };
 
@@ -65,7 +64,7 @@ export default function Home() {
   // ----------------------------------------
   // JSX 
   // ----------------------------------------
-  if (loading) {
+  if (userLoading || coursesLoading) {
     return <Loading />;
   }
   if (error) {
@@ -77,10 +76,9 @@ export default function Home() {
 
   return (
     <main className="p-6 text-center ">
-      {/* <h1 className="text-2xl font-bold mb-4">ランニングコース共有アプリ</h1> */}
       <div className="space-x-2 space-y-2">
         <button className="fixed bottom-4 right-4 bg-rose-500 text-white p-4 rounded-full
-         shadow-lg hover:bg-rose-600 transition z-[9999]">
+         shadow-lg hover:bg-rose-600 transition z-9999">
           <PlusIcon
             className="w-6 h-6"
             onClick={handleClick} />

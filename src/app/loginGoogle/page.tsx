@@ -8,7 +8,7 @@ export default function GoogleLogin() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`, // ←リダイレクト先
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}`,
       },
     });
     if (error) console.error("Login error:", error);
