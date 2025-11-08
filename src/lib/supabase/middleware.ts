@@ -1,22 +1,33 @@
 // lib/supabase/middleware.ts
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export async function updateSession(request: Request) {
-  let response = NextResponse.next();
+export async function updateSession(request: NextRequest) {
+  const response = NextResponse.next({ request });
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name) {
-          return request.headers.get("cookie") ?? "";
+        get(name: string) {
+          return request.cookies.get(name)?.value;
         },
-        set(name, value, options) {
-          response.headers.append("set-cookie", `${name}=${value}; Path=/; HttpOnly; Secure; SameSite=Lax`);
+        set(name: string, value: string, options: any) {
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          });
         },
-        remove(name, options) {
-          response.headers.append("set-cookie", `${name}=; Path=/; Max-Age=0`);
+        remove(name: string, options: any) {
+          response.cookies.set({
+            name,
+            value: "",
+            ...options,
+            maxAge: 0,
+          });
         },
       },
     }
