@@ -4,16 +4,16 @@ import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
   // 🍪 ここでCookieを全部ログ出力！
-  console.log("🍪 All cookies:", request.cookies.getAll());
+  console.log("All cookies:", request.cookies.getAll());
 
   const response = await updateSession(request);
 
   // --- 状態チェック追加 ---
   const cookieHeader = request.headers.get("cookie");
   if (cookieHeader?.includes("sb-access-token")) {
-    console.log("✅ Middleware: cookie present (logged in)");
+    console.log("Middleware: cookie present (logged in)");
   } else {
-    console.log("🚫 Middleware: no auth cookie (guest)");
+    console.log("Middleware: no auth cookie (guest)");
   }
 
   return response;

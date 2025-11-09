@@ -76,10 +76,9 @@ export default function Home() {
 
   return (
     <main className="p-6 text-center ">
-      {/* <h1 className="text-2xl font-bold mb-4">ランニングコース共有アプリ</h1> */}
       <div className="space-x-2 space-y-2">
         <button className="fixed bottom-4 right-4 bg-rose-500 text-white p-4 rounded-full
-         shadow-lg hover:bg-rose-600 transition z-[9999]">
+         shadow-lg hover:bg-rose-600 transition z-9999">
           <PlusIcon
             className="w-6 h-6"
             onClick={handleClick} />

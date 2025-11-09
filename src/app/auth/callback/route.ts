@@ -6,6 +6,8 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const error = url.searchParams.get("error");
+  console.log("Callback URL:", request.url);
+  console.log("Code:", code);
 
   if (error) {
     console.error("OAuth Error:", error);
@@ -42,7 +44,6 @@ export async function GET(request: Request) {
       },
     }
   );
-
   const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
   if (exchangeError) {
