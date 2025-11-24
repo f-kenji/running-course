@@ -1,10 +1,11 @@
 'use client';
+// import { signOut } from "@/auth";
+import { signOut } from "next-auth/react";
 import { useUser } from "@/context/UserContext";
-import { supabase } from '@/lib/supabase/client';
+// import { supabase } from '@/lib/supabase/client';
 import Link from "next/link"
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
 
 // ----------------------------------------
 // CSS 
@@ -14,13 +15,22 @@ const linkStyle = "text-sm ml-4 transition rounded-md px-1\
          text-xs sm:text-sm px-1 sm:px-2 py-0.5 sm:py-1 "
 
 export default function Header() {
-    const { user } = useUser();
+     const { user, refetch } = useUser();
     const router = useRouter();
     const [mounted, setMounted] = useState(false);
     useEffect(() => {
         setMounted(true);
     }, []);
-
+    //TODO：整理する
+    // useEffect(() => {
+    //     async function fetchSession() {
+    //     const res = await fetch("/api/auth/session")
+    //     const data = await res.json()
+    //     console.log("/api/auth/session のres　：",data);
+    //     // setSession(data)
+    //     }
+    //     fetchSession()
+    // }, [])
     if (!mounted) return null; // SSRとCSRのズレを防ぐ
 
     // console.log(user);
@@ -43,8 +53,12 @@ export default function Header() {
                         </span>
                         <button
                             className={linkStyle}
-                            onClick={() => {
-                                supabase.auth.signOut();
+                            onClick={async() => {
+                                //TODO：NextAuthのsignOutに変更
+                                // supabase.auth.signOut();
+                                await signOut();
+                                // ログアウト後、セッション情報をクリア
+                                refetch();
                                 router.push("/");
                             }}>
                             ログアウト

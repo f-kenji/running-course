@@ -50,7 +50,6 @@ export default function UploadForm({ course }: UploadFormProps) {
 
     const attributeKeys = Object.keys(courseAttributes) as (keyof typeof courseAttributes)[];
 
-    // const gpxUrl = "/activity_20443982855.gpx"; // 仮設定
     // const thumbnailUrl = course?.image_url ?? '';
     const thumbnailUrl = "";
 
@@ -58,7 +57,6 @@ export default function UploadForm({ course }: UploadFormProps) {
     // eventHandler - 投稿 or 更新
     //-----------------------------------------------
     const handleSubmit = async () => {
-        // TODO：コメントアウトをもどす
         if (!user) return alert('ログインしてください');
         if (!gpxFile && !course?.gpx_url) return alert('GPXファイルが必要です');
         if (description.length > 1000) return alert('説明文は1000文字以内にしてください');
@@ -140,12 +138,33 @@ export default function UploadForm({ course }: UploadFormProps) {
     const handleDialogOpen = () => {
         // if (!gpxFile || !title || !pref || !city) return;
         // ユーザーがログインしているか
-        // TODO：コメントアウトをもどす
         if (!user) return alert('ログインしてください');
         // GPXファイルがあるか
         if (!gpxFile && !course?.gpx_url) return alert('GPXファイルが必要です');
         // 説明文の文字数チェック
         if (description.length > 1000) return alert('説明文は1000文字以内にしてください');
+
+        // 距離のバリデーション
+        const dist = Number(distance);
+
+        if (isNaN(dist)) {
+            return alert('距離が数値として正しくありません');
+        }
+
+        // numeric(10,3) 的なチェック
+        // 小数点3桁まで
+        if (!/^\d+(\.\d{1,3})?$/.test(distance.toString())) {
+            return alert('距離は小数点3桁以内で入力してください (例: 10.123)');
+        }
+
+        if (dist <= 0) {
+            return alert('距離は 0 より大きい値を入力してください');
+        }
+
+        if (dist > 300) {
+            return alert('距離は 300km 以下で入力してください（超長距離は対応していません）');
+        }
+        
         // ダイアログを開く
         setDialogOpen(true);
     }
