@@ -1,27 +1,27 @@
 // /app/upload/page.tsx
 'use client'
-import Link from "next/link"
-import { supabase } from '@/lib/supabase/client'
 import UploadForm from "@/app/components/features/uploadForm";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react"
 
 export default function UploadPage() {
+  const { data: session, status } = useSession()
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
 
+  // 認証状態が確定したら、未ログインならリダイレクト
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser()
-      if (error || !user) {
-        router.push("/loginGoogle")
-      }
-      setLoading(false)
+    if (status === "unauthenticated") {
+      router.push("/loginGoogle")
     }
-    checkUser()
-  }, [router])
+  }, [status, router])
 
-  if (loading) return <p>認証中...</p>
+  if (status === "loading") {
+    return <p>認証中...</p>
+  }
+
+  // 遅延なく、未ログインなら何も表示しない
+  if (!session) return null
 
   return (
     <>
@@ -29,7 +29,6 @@ export default function UploadPage() {
         <h1 className="text-2xl font-bold mb-4">コースを投稿する</h1>
         <UploadForm />
       </div >
-      <Link href="/">Running Course</Link>
     </>
   );
 }
