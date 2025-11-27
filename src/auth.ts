@@ -15,6 +15,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true,  // Vercel の動的 URL に対応
   callbacks: {
     async signIn({ user, account }) {
       if (!user.email) {
