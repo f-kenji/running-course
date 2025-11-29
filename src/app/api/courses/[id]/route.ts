@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { deleteGpxFile } from '@/lib/supabase/gpxStorage'
 
 // コース取得
 export async function GET(
@@ -78,19 +77,30 @@ export async function DELETE(
     }
 
     // 削除対象を取得
-    const { data: existing } = await supabaseAdmin
+    const { data: existing, error: fetchError } = await supabaseAdmin
       .from('courses')
       .select('*')
       .eq('id', params.id)
       .single()
 
+    if (fetchError) {
+      return NextResponse.json({ error: fetchError.message }, { status: 500 })
+    }
+
     if (!existing || existing.user_id !== session.user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    // GPX ファイル削除
+    // GPX ファイルを削除（直接 supabaseAdmin を使用）
     if (existing.gpx_path) {
-      await deleteGpxFile(existing.gpx_path)
+      const { error: storageError } = await supabaseAdmin.storage
+        .from('gpx')
+        .remove([existing.gpx_path])
+
+      if (storageError) {
+        console.error('GPX file deletion failed:', storageError)
+        // ファイル削除失敗してもコースは削除を続行
+      }
     }
 
     // コース削除
@@ -106,6 +116,7 @@ export async function DELETE(
 
     return NextResponse.json({ data })
   } catch (error: any) {
+    console.error('Delete course error:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

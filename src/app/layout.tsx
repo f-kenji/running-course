@@ -35,7 +35,11 @@ export default function RootLayout({
           <UserProvider>
             <Header />
             {children}
+<<<<<<< HEAD
             {/*TODO:もどす <Analytics /> */}
+=======
+            <Analytics />
+>>>>>>> 5117c00e42867cd5b07d22630628c333c7ce204b
           </UserProvider>
         </SessionProvider>
       </body>
