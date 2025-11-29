@@ -1,6 +1,5 @@
 // app/page.tsx
 'use client';
-export const dynamic = "force-dynamic";
 import React from "react";
 import Link from "next/link";
 import { getCourses } from '@/lib/supabase/courses'
