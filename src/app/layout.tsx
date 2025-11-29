@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/app/components/features/header";
 import { UserProvider } from "@/context/UserContext";
 import { Analytics } from "@vercel/analytics/next"
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,11 +31,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <UserProvider>
-          <Header />
-          {children}
-          <Analytics />
-        </UserProvider>
+        <SessionProvider>
+          <UserProvider>
+            <Header />
+            {children}
+            {/*TODO:もどす <Analytics /> */}
+          </UserProvider>
+        </SessionProvider>
       </body>
     </html>
   );

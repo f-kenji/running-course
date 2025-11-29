@@ -1,19 +1,15 @@
 // src\app\loginGoogle\page.tsx
 "use client";
-import { supabase } from "@/lib/supabase/client";
-import Image from "next/image";
+import { signIn } from "next-auth/react"
 
 export default function GoogleLogin() {
-  const handleGoogleLogin = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}`,
-      },
+  const handleGoogleLogin = () => {
+    signIn("google", {
+      callbackUrl: process.env.NEXT_PUBLIC_SITE_URL,
     });
-    if (error) console.error("Login error:", error);
   };
 
+  
   return (
     <div className="flex flex-col items-center  pt-32 min-h-screen ">
       
