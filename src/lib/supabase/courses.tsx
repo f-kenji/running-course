@@ -1,4 +1,5 @@
 import { CourseInsert, CourseRow } from "@/types/course.type";
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost4000';
 
 //-----------------------------------------------
 // function - コース投稿
@@ -62,7 +63,7 @@ export async function getCourses(
   limit = 10
 ): Promise<{ data: CourseRow[] | null; error: string | null }> {
   try {
-    const response = await fetch(`/api/courses?limit=${limit}`);
+    const response = await fetch(`${baseUrl}/api/courses?limit=${limit}`);
 
     if (!response.ok) {
       const error = await response.json();
